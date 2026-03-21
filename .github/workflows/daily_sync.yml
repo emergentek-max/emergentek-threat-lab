@@ -1,0 +1,37 @@
+name: Update Daily Threat Map
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build_and_release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install Dependencies
+        run: pip install requests mmh3 # mmh3 for Bloom Filter math
+
+      - name: Run Aggregator
+        run: python aggregator.py # Generates daily_filter.bin
+
+      - name: Update Latest Release
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          tag: "latest"
+          name: "Daily Threat Intelligence"
+          body: "Auto-generated threat map. Updated on ${{ github.event.head_commit.timestamp }}"
+          artifacts: "daily_filter.bin"
+          replacesArtifacts: true
+          makeLatest: true
