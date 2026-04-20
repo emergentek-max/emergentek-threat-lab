@@ -1,4 +1,4 @@
-name: Update Daily Threat Map
+name: Update Daily Threat Intelligence
 
 on:
   schedule:
@@ -23,20 +23,39 @@ jobs:
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install requests mmh3 bitarray
+          pip install requests
 
       - name: Run Aggregator
-        run: python aggregator.py 
+        id: aggregator
+        run: |
+          python aggregator.py
+          echo "bin_file=$(ls threat-intel-*.bin | head -1)" >> $GITHUB_OUTPUT
+          echo "sha256_file=$(ls threat-intel-*.sha256 | head -1)" >> $GITHUB_OUTPUT
+
+      - name: Set Timestamp
+        id: timestamp
+        run: |
+          echo "value=$(date -u +'%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_OUTPUT
 
       - name: Update Latest Release
         uses: ncipollo/release-action@v1
         with:
           allowUpdates: true
           tag: "latest"
-          name: "Daily Threat Intelligence"
-          body: "Auto-generated threat map. Last updated: ${{ github.event.head_commit.timestamp || github.sha }}"
-          artifacts: "daily_filter.bin"
+          name: "Daily Threat Intelligence v1.0"
+          body: "Auto-generated threat intelligence feed. Last updated: ${{ steps.timestamp.value }}"
+          artifacts: "${{ steps.aggregator.outputs.bin_file }},${{ steps.aggregator.outputs.sha256_file }},latest.json"
           replacesArtifacts: true
           makeLatest: true
+          prerelease: false
+
+      - name: Create Versioned Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: "v1.0-${{ github.run_number }}"
+          name: "Threat Intelligence v1.0 - Build ${{ github.run_number }}"
+          body: "Versioned threat intelligence feed. Last updated: ${{ steps.timestamp.value }}"
+          artifacts: "${{ steps.aggregator.outputs.bin_file }},${{ steps.aggregator.outputs.sha256_file }},latest.json"
+          makeLatest: false
           prerelease: false 
 
