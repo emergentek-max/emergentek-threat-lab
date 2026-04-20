@@ -33,8 +33,8 @@ latest.json
 
 Example:
 ```
-threat-intel-v1.0-20240419-142530.bin
-threat-intel-v1.0-20240419-142530.sha256
+threat-intel-v1.0-20260419-142530.bin
+threat-intel-v1.0-20260419-142530.sha256
 ```
 
 ## Consumer Integration
@@ -46,8 +46,8 @@ Consumers (like GuardLens) can integrate with this feed by:
    {
      "version": "1.0",
      "timestamp": 1713530730,
-     "bin_url": "https://github.com/emergentek-max/emergentek-threat-lab/releases/download/latest/threat-intel-v1.0-20240419-142530.bin",
-     "sha256_url": "https://github.com/emergentek-max/emergentek-threat-lab/releases/download/latest/threat-intel-v1.0-20240419-142530.sha256",
+     "bin_url": "https://github.com/emergentek-max/emergentek-threat-lab/releases/download/latest/threat-intel-v1.0-20260419-142530.bin",
+     "sha256_url": "https://github.com/emergentek-max/emergentek-threat-lab/releases/download/latest/threat-intel-v1.0-20260419-142530.sha256",
      "entry_count": 150000
    }
    ```
@@ -97,7 +97,7 @@ The workflow can also be triggered manually via `workflow_dispatch`.
 
 ## License
 
-Copyright 2024 Emergentek LLC
+Copyright 2026 Emergentek LLC
 
 Licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE) for details.
 
