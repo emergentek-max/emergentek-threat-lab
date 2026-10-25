@@ -2,11 +2,15 @@ name: Update Daily Threat Intelligence
 
 on:
   schedule:
-    - cron: '0 0 * * *'
+    - cron: '23 5 * * *'
   workflow_dispatch:
 
 permissions:
   contents: write
+
+concurrency:
+  group: threat-intel-release
+  cancel-in-progress: false
 
 jobs:
   build_and_release:
@@ -45,17 +49,6 @@ jobs:
           name: "Daily Threat Intelligence v1.0"
           body: "Auto-generated threat intelligence feed. Last updated: ${{ steps.timestamp.value }}"
           artifacts: "${{ steps.aggregator.outputs.bin_file }},${{ steps.aggregator.outputs.sha256_file }},latest.json"
-          replacesArtifacts: true
+          removeArtifacts: true
           makeLatest: true
           prerelease: false
-
-      - name: Create Versioned Release
-        uses: ncipollo/release-action@v1
-        with:
-          tag: "v1.0-${{ github.run_number }}"
-          name: "Threat Intelligence v1.0 - Build ${{ github.run_number }}"
-          body: "Versioned threat intelligence feed. Last updated: ${{ steps.timestamp.value }}"
-          artifacts: "${{ steps.aggregator.outputs.bin_file }},${{ steps.aggregator.outputs.sha256_file }},latest.json"
-          makeLatest: false
-          prerelease: false 
-
